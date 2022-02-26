@@ -49,6 +49,25 @@ test.group('User', (group) => {
     assert.equal(body.status, 409)
   })
 
+  test('it should return 409 when username is aready in use', async (assert) => {
+    const { username } = await UserFactory.create()
+    const { body } = await supertest(BASE_URL)
+      .post('/users')
+      .send({
+        username,
+        email: 'test@test.com',
+        password: 'test',
+      })
+      .expect(409)
+
+    assert.exists(body.message)
+    assert.exists(body.code)
+    assert.exists(body.status)
+    assert.include(body.message, 'username')
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 409)
+  })
+
   group.beforeEach(async () => {
     await Database.beginGlobalTransaction()
   })
