@@ -68,6 +68,12 @@ test.group('User', (group) => {
     assert.equal(body.status, 409)
   })
 
+  test.only('it should return 422 when required data is not provided', async (assert) => {
+    const { body } = await supertest(BASE_URL).post('/users').send({}).expect(422)
+    assert.equal(body.code, 'BAD_REQUEST')
+    assert.equal(body.status, 422)
+  })
+
   group.beforeEach(async () => {
     await Database.beginGlobalTransaction()
   })
